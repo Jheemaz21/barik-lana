@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barik Lana Galon - Keuangan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-droplet"></i>
+                <h2 id="namaUsahaTampil">Barik Lana Galon</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-target="dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="#" class="nav-link" data-target="pemasukan"><i class="fa-solid fa-arrow-trend-up"></i> Pemasukan</a>
+                <a href="#" class="nav-link" data-target="pengeluaran"><i class="fa-solid fa-arrow-trend-down"></i> Pengeluaran</a>
+                <a href="#" class="nav-link" data-target="laporan"><i class="fa-solid fa-file-invoice-dollar"></i> Laporan</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="themeToggle" class="btn-theme"><i class="fa-solid fa-moon"></i> Dark Mode</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="notification" id="notification">Notifikasi</div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="page-section active">
+                <div class="cards-grid">
+                    <div class="card stat-card blue">
+                        <div class="stat-info">
+                            <h3>Pemasukan Hari Ini</h3>
+                            <p class="amount" id="dashPemasukan">Rp 0</p>
+                        </div>
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div class="card stat-card red">
+                        <div class="stat-info">
+                            <h3>Pengeluaran Hari Ini</h3>
+                            <p class="amount" id="dashPengeluaran">Rp 0</p>
+                        </div>
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                    <div class="card stat-card green">
+                        <div class="stat-info">
+                            <h3>Saldo Kas</h3>
+                            <p class="amount" id="dashSaldo">Rp 0</p>
+                        </div>
+                        <i class="fa-solid fa-piggy-bank"></i>
+                    </div>
+                    <div class="card stat-card purple">
+                        <div class="stat-info">
+                            <h3>Galon Terjual (Bulan Ini)</h3>
+                            <p class="amount" id="dashGalon">0</p>
+                        </div>
+                        <i class="fa-solid fa-bottle-water"></i>
+                    </div>
+                </div>
+                <div class="card chart-container">
+                    <canvas id="keuanganChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Pemasukan Section -->
+            <section id="pemasukan" class="page-section">
+                <div class="card form-container">
+                    <h3>Tambah Pemasukan</h3>
+                    <form id="formPemasukan">
+                        <input type="hidden" id="inId">
+                        <div class="form-group">
+                            <label>Tanggal</label>
+                            <input type="date" id="inTanggal" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Pelanggan</label>
+                            <input type="text" id="inPelanggan" placeholder="Nama Pelanggan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jumlah Galon</label>
+                            <input type="number" id="inJumlah" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Harga per Galon</label>
+                            <input type="number" id="inHarga" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total</label>
+                            <input type="number" id="inTotal" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Simpan</button>
+                    </form>
+                </div>
+                <div class="card table-container">
+                    <div class="table-header">
+                        <h3>Data Pemasukan</h3>
+                        <input type="text" id="searchPemasukan" placeholder="Cari pelanggan..." class="search-box">
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Pelanggan</th>
+                                <th>Jml Galon</th>
+                                <th>Harga</th>
+                                <th>Total</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablePemasukan"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Pengeluaran Section -->
+            <section id="pengeluaran" class="page-section">
+                <div class="card form-container">
+                    <h3>Tambah Pengeluaran</h3>
+                    <form id="formPengeluaran">
+                        <input type="hidden" id="outId">
+                        <div class="form-group">
+                            <label>Tanggal</label>
+                            <input type="date" id="outTanggal" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kategori</label>
+                            <select id="outKategori" required>
+                                <option value="Operasional">Operasional</option>
+                                <option value="Bahan Baku">Bahan Baku</option>
+                                <option value="Gaji">Gaji</option>
+                                <option value="Lain-lain">Lain-lain</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Keterangan</label>
+                            <input type="text" id="outKeterangan" placeholder="Keterangan pengeluaran" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nominal</label>
+                            <input type="number" id="outNominal" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger"><i class="fa-solid fa-save"></i> Simpan</button>
+                    </form>
+                </div>
+                <div class="card table-container">
+                    <div class="table-header">
+                        <h3>Data Pengeluaran</h3>
+                        <input type="text" id="searchPengeluaran" placeholder="Cari keterangan..." class="search-box">
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Kategori</th>
+                                <th>Keterangan</th>
+                                <th>Nominal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablePengeluaran"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Laporan & Database Section -->
+            <section id="laporan" class="page-section">
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Laporan Keuangan</h3>
+                        <div class="form-group">
+                            <label>Bulan / Tahun</label>
+                            <input type="month" id="filterBulan">
+                        </div>
+                        <div class="laporan-summary">
+                            <p>Total Pemasukan: <strong class="text-blue" id="lapPemasukan">Rp 0</strong></p>
+                            <p>Total Pengeluaran: <strong class="text-red" id="lapPengeluaran">Rp 0</strong></p>
+                            <p>Laba Bersih: <strong class="text-green" id="lapLaba">Rp 0</strong></p>
+                        </div>
+                        <div class="export-buttons mt-3">
+                            <button class="btn btn-outline" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Cetak PDF</button>
+                            <button class="btn btn-outline" id="btnExportExcel"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Manajemen Database JSON</h3>
+                        <p class="text-muted">Backup data ke file JSON atau restore data dari file JSON.</p>
+                        <div class="export-buttons mt-3">
+                            <button class="btn btn-primary" id="btnBackup"><i class="fa-solid fa-download"></i> Backup JSON</button>
+                            <label for="restoreFile" class="btn btn-outline" style="cursor: pointer;">
+                                <i class="fa-solid fa-upload"></i> Restore JSON
+                            </label>
+                            <input type="file" id="restoreFile" accept=".json" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
